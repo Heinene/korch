@@ -1,7 +1,10 @@
-import sys
-import os
+import sys, time, os
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtWidgets import QScrollBar,QSplitter,QTableWidgetItem,QTableWidget,QComboBox,QVBoxLayout,QGridLayout,QDialog,QWidget, QPushButton, QApplication, QMainWindow,QAction,QMessageBox,QLabel,QTextEdit,QProgressBar,QLineEdit
+from PyQt5.QtCore import QCoreApplication
+import socket
+from threading import Thread 
+from socketserver import ThreadingMixIn 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
