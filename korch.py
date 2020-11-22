@@ -6,10 +6,12 @@ import socket
 from threading import Thread 
 from socketserver import ThreadingMixIn 
 
+conn=None
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(800, 700)
         MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -49,9 +51,12 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "просмотр"))
-        self.pushButton_2.setText(_translate("MainWindow", "остановка"))
-        self.pushButton_3.setText(_translate("MainWindow", "переслать"))
+       
+       
+        self.pushButton.setText(_translate("MainWindow", "start"))
+        self.pushButton_2.setText(_translate("MainWindow", "file"))
+        self.pushButton_3.setText(_translate("MainWindow", "stop and send"))
+       
 
 
 editorProgram = 'notepad'
@@ -60,18 +65,20 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.pushButton.clicked.connect(self.browse_folder)
+        #.pushButton.clicked.connect(self.browse_folder)
         self.pushButton_2.clicked.connect(self.Open)
+        self.pushButton_2.clicked.connect(self.read_from_file)
 
-    def browse_folder(self):
-        self.listWidget.clear()
-        directory = QtWidgets.QFileDialog.getExistingDirectory(self, "просмтр")
-        if directory: 
-            for file_name in os.listdir(directory):
-                self.listWidget.addItem(file_name)  
+
+   # def browse_folder(self):
+    #    self.listWidget.clear()
+     #   directory = QtWidgets.QFileDialog.getExistingDirectory(self, "просмтр")
+      #  if directory: 
+       #     for file_name in os.listdir(directory):
+        #        self.listWidget.addItem(file_name)  
 
     def Open(self):
-        file, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'остановка',
+        file, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'File',
                                         './',
                                         'Text Files (*.txt)')
         if not file:
@@ -82,6 +89,87 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.setEnabled(False)
         process.finished.connect(lambda: self.setEnabled(True))
+
+    def send(self):
+        text=self.chatTextField.text()
+        font=self.chat.font()
+        font.setPointSize(13)
+        self.chat.setFont(font)
+        textFormatted='{:>80}'.format(text)
+        self.chat.append(textFormatted)
+        tcpClientA.send(text.encode())
+        self.chatTextField.setText("")
+   
+  #  def send(self):
+   #     text=self.chatTextField.text()
+    #    font=self.chat.font()
+     #   font.setPointSize(13)
+      #  self.chat.setFont(font)
+       # textFormatted='{:>80}'.format(text)
+        #self.chat.append(textFormatted)
+        #global conn
+        #conn.send(text.encode("utf-8"))
+        #self.chatTextField.setText("")
+
+    def read_from_file(self, file):
+        try:
+            list_widget = self.listWidget
+            with open(file, 'r') as fin:
+                entries = [e.strip() for e in fin.readlines()]
+            list_widget.insertItems(0, entries)
+        except OSError as err:
+            with open(file, 'w'):
+                pass
+
+
+
+class ServerThread(Thread):
+    def __init__(self,window): 
+        Thread.__init__(self) 
+        self.window=window
+ 
+    def run(self): 
+        TCP_IP = '0.0.0.0' 
+        TCP_PORT = 80 
+        BUFFER_SIZE = 20  
+        tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+        tcpServer.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
+        tcpServer.bind((TCP_IP, TCP_PORT)) 
+        threads = [] 
+        
+        tcpServer.listen(4) 
+        while True:
+            print("Multithreaded Python server : Waiting for connections from TCP clients...") 
+            global conn
+            (conn, (ip,port)) = tcpServer.accept() 
+            newthread = ClientThread(ip,port,window) 
+            newthread.start() 
+            threads.append(newthread) 
+        
+        for t in threads: 
+            t.join() 
+
+
+
+class ClientThread(Thread): 
+ 
+    def __init__(self,ip,port,window): 
+        Thread.__init__(self) 
+        self.window=window
+        self.ip = ip 
+        self.port = port 
+        print("[+] New server socket thread started for " + ip + ":" + str(port)) 
+ 
+    def run(self): 
+        while True : 
+            
+            global conn
+            data = conn.recv(2048) 
+            window.chat.append(data.decode("utf-8"))
+            print(data)
+
+
+
 def main():
     app = QtWidgets.QApplication(sys.argv)
     window = ExampleApp()
