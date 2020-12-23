@@ -11,7 +11,7 @@ conn=None
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 700)
+        MainWindow.resize(1920, 700)
         MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -45,6 +45,11 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+
+    
+  
+
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -65,17 +70,12 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        #.pushButton.clicked.connect(self.browse_folder)
+        self.pushButton.clicked.connect(self.send)
         self.pushButton_2.clicked.connect(self.Open)
         self.pushButton_2.clicked.connect(self.read_from_file)
 
 
-   # def browse_folder(self):
-    #    self.listWidget.clear()
-     #   directory = QtWidgets.QFileDialog.getExistingDirectory(self, "просмтр")
-      #  if directory: 
-       #     for file_name in os.listdir(directory):
-        #        self.listWidget.addItem(file_name)  
+
 
     def Open(self):
         file, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'File',
@@ -90,6 +90,9 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setEnabled(False)
         process.finished.connect(lambda: self.setEnabled(True))
 
+
+
+  
     def send(self):
         text=self.chatTextField.text()
         font=self.chat.font()
@@ -97,19 +100,10 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.chat.setFont(font)
         textFormatted='{:>80}'.format(text)
         self.chat.append(textFormatted)
-        tcpClientA.send(text.encode())
+        global conn
+        conn.send(text.encode("utf-8"))
+        conn.send("start".encode("utf-8"))
         self.chatTextField.setText("")
-   
-  #  def send(self):
-   #     text=self.chatTextField.text()
-    #    font=self.chat.font()
-     #   font.setPointSize(13)
-      #  self.chat.setFont(font)
-       # textFormatted='{:>80}'.format(text)
-        #self.chat.append(textFormatted)
-        #global conn
-        #conn.send(text.encode("utf-8"))
-        #self.chatTextField.setText("")
 
     def read_from_file(self, file):
         try:
@@ -124,9 +118,9 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 class ServerThread(Thread):
-    def __init__(self,window): 
+    def __init__(self,ExampleApp): 
         Thread.__init__(self) 
-        self.window=window
+        self.ExampleApp=ExampleApp
  
     def run(self): 
         TCP_IP = '0.0.0.0' 
@@ -142,20 +136,18 @@ class ServerThread(Thread):
             print("Multithreaded Python server : Waiting for connections from TCP clients...") 
             global conn
             (conn, (ip,port)) = tcpServer.accept() 
-            newthread = ClientThread(ip,port,window) 
+            newthread = ClientThread(ip,port,ExampleApp) 
             newthread.start() 
             threads.append(newthread) 
         
         for t in threads: 
             t.join() 
 
-
-
 class ClientThread(Thread): 
  
-    def __init__(self,ip,port,window): 
+    def __init__(self,ip,port,ExampleApp): 
         Thread.__init__(self) 
-        self.window=window
+        self.ExampleApp=ExampleApp
         self.ip = ip 
         self.port = port 
         print("[+] New server socket thread started for " + ip + ":" + str(port)) 
@@ -165,15 +157,19 @@ class ClientThread(Thread):
             
             global conn
             data = conn.recv(2048) 
-            window.chat.append(data.decode("utf-8"))
+            #ExampleApp.chat.append(data.decode("utf-8"))
             print(data)
 
 
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
+
     window = ExampleApp()
+    serverThread=ServerThread(ExampleApp)
     window.show()
+    serverThread.start()
     app.exec_()
+
 if __name__ == '__main__':
     main()
