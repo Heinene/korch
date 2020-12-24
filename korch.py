@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QMainWindow, QInputDialog, QScrollBar,QSplitter,QTab
 from PyQt5.QtCore import QCoreApplication
 import socket
 from threading import Thread 
+import time
 from socketserver import ThreadingMixIn 
 
 conn=None
@@ -30,7 +31,7 @@ class Ui_MainWindow(object):
 
 
        # self.listWidget = QtWidgets.QListWidget(self.widget)
-       # self.listWidget.setObjectName("listWidget")
+       # selflistWidget.setObjectName("listWidget")
        # self.verticalLayout.addWidget(self.listWidget)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -146,6 +147,7 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
         conn.send(text.encode())
         conn.send("start".encode())
         self.chatTextField.setText("")
+       
 
     #def read_from_file(self, file):
      #   try:
@@ -198,12 +200,32 @@ class ClientThread(Thread):
         while True : 
             
             global conn
-            data = conn.recv(2048)
-            window.TextW.append(data.decode())
+            data = conn.recv(60000)
+            #f=open(time.strftime("%Y%m%d-%H")+".txt","w")
+            print(data.decode())
+   
+            if len(data)<3:
+                break
+                file.close()
+ 
+            else:
 
-            print(data)
+                with open (time.strftime("%Y%m%d-%H")+".txt","a") as file:
+                    file.write(data.decode()+"\n")
 
+                #g.write(data.decode()+"\n")
 
+               
+                #f=open(time.strftime("%Y%m%d-%H%M%S")+".txt","a")
+                # f.write(data.decode()+"\n")
+                #print(data.decode(),file=g)
+              #  sys.stdout=g
+              
+                
+#def zap(d):
+ #   f=open(time.strftime("%Y%m%d-%H%M%S")+".txt","w")
+  #  while len(d)!=1:
+   #     f.write(d)
 
 def main():
     app = QApplication(sys.argv)
@@ -213,6 +235,6 @@ def main():
     window.show()
     serverThread.start()
     app.exec_()
-
+    
 if __name__ == '__main__':
     main()
