@@ -108,8 +108,8 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         textFormatted='{:>80}'.format(text)
         self.chat.append(textFormatted)
         global conn
-        conn.send(text.encode("utf-8"))
-        conn.send("start".encode("utf-8"))
+        conn.send(text.encode())
+        conn.send("start".encode())
         self.chatTextField.setText("")
 
     def read_from_file(self, file):
