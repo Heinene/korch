@@ -49,13 +49,14 @@ class Ui_MainWindow(object):
         self.chatTextField.resize(480,100)
         self.chatTextField.move(10,350)
         self.chatBody=QVBoxLayout(self)
-        # self.chatBody.addWidget(self.chatTextField)
-        # self.chatBody.addWidget(self.btnSend)
-        # self.chatWidget.setLayout(self.chatBody)
         splitter=QSplitter(QtCore.Qt.Vertical)
         self.chat = QTextEdit()
         self.chat.setReadOnly(True)
-        
+
+
+
+
+
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -164,7 +165,7 @@ class ClientThread(Thread):
             
             global conn
             data = conn.recv(2048) 
-            #ExampleApp.chat.append(data.decode("utf-8"))
+           # ExampleApp.chat.append(data.decode())
             print(data)
 
 
