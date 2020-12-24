@@ -1,6 +1,6 @@
 import sys, time, os
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QScrollBar,QSplitter,QTableWidgetItem,QTableWidget,QComboBox,QVBoxLayout,QGridLayout,QDialog,QWidget, QPushButton, QApplication, QMainWindow,QAction,QMessageBox,QLabel,QTextEdit,QProgressBar,QLineEdit
+from PyQt5.QtWidgets import QMainWindow, QInputDialog, QScrollBar,QSplitter,QTableWidgetItem,QTableWidget,QComboBox,QVBoxLayout,QGridLayout,QDialog,QWidget, QPushButton, QApplication, QMainWindow,QAction,QMessageBox,QLabel,QTextEdit,QProgressBar,QLineEdit
 from PyQt5.QtCore import QCoreApplication
 import socket
 from threading import Thread 
@@ -21,9 +21,17 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.widget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.listWidget = QtWidgets.QListWidget(self.widget)
-        self.listWidget.setObjectName("listWidget")
-        self.verticalLayout.addWidget(self.listWidget)
+        
+       # self.TextW=QtWidgets.QTextEdit(self.widget)
+        #self.TextW.setObjectName("TextW")
+        #self.TextW.resize(480,100)
+        ##self.TextW.move(10,350)
+        #self.verticalLayout.addWidget(self.TextW)
+
+
+       # self.listWidget = QtWidgets.QListWidget(self.widget)
+       # self.listWidget.setObjectName("listWidget")
+       # self.verticalLayout.addWidget(self.listWidget)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.pushButton = QtWidgets.QPushButton(self.widget)
@@ -50,11 +58,26 @@ class Ui_MainWindow(object):
         self.chatTextField.move(10,350)
         self.chatBody=QVBoxLayout(self)
         splitter=QSplitter(QtCore.Qt.Vertical)
-        self.chat = QTextEdit()
-        self.chat.setReadOnly(True)
+       
+        
+ 
+      
+       # self.btn = QPushButton('Dialog', self)
+        #self.btn.move(20, 20)
+
+#        self.le = QLineEdit(self)
+ #       self.le.move(130, 22)
+
+  #      self.setGeometry(300, 300, 290, 150)
+   #     self.setWindowTitle('Input dialog')
+    #    self.show()
 
 
 
+    
+
+
+        MainWindow.resize(900, 600)
 
 
 
@@ -69,20 +92,31 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "start"))
         self.pushButton_2.setText(_translate("MainWindow", "file"))
         self.pushButton_3.setText(_translate("MainWindow", "stop and send"))
-       
 
 
 editorProgram = 'notepad'
 
-class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
+class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
     def __init__(self):
         super().__init__()
+        self.flag=0
         self.setupUi(self)
         self.pushButton.clicked.connect(self.send)
         self.pushButton_2.clicked.connect(self.Open)
         #self.pushButton_2.clicked.connect(self.read_from_file)
 
+        self.flag=0
+       
 
+        self.TextW=QTextEdit()
+        self.TextW.setObjectName("TextW")
+        self.TextW.resize(480,100)
+        #self.TextW.move(10,350)
+        self.verticalLayout.addWidget(self.TextW)
+        self.TextW.setReadOnly(True)
+       
+
+          
 
 
     def Open(self):
@@ -103,25 +137,25 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
   
     def send(self):
         text=self.chatTextField.text()
-        font=self.chat.font()
+        font=self.TextW.font()
         font.setPointSize(13)
-        self.chat.setFont(font)
+        self.TextW.setFont(font)
         textFormatted='{:>80}'.format(text)
-        self.chat.append(textFormatted)
+        self.TextW.append(textFormatted)
         global conn
         conn.send(text.encode())
         conn.send("start".encode())
         self.chatTextField.setText("")
 
-    def read_from_file(self, file):
-        try:
-            list_widget = self.listWidget
-            with open(file, 'r') as fin:
-                entries = [e.strip() for e in fin.readlines()]
-            list_widget.insertItems(0, entries)
-        except OSError as err:
-            with open(file, 'w'):
-                pass
+    #def read_from_file(self, file):
+     #   try:
+      #      list_widget = self.listWidget
+       #     with open(file, 'r') as fin:
+        #        entries = [e.strip() for e in fin.readlines()]
+         #   list_widget.insertItems(0, entries)
+        #except OSError as err:
+         #   with open(file, 'w'):
+          #      pass
 
 
 
@@ -155,7 +189,7 @@ class ClientThread(Thread):
  
     def __init__(self,ip,port,ExampleApp): 
         Thread.__init__(self) 
-        self.ExampleApp=ExampleApp
+        self.window=ExampleApp
         self.ip = ip 
         self.port = port 
         print("[+] New server socket thread started for " + ip + ":" + str(port)) 
@@ -164,14 +198,15 @@ class ClientThread(Thread):
         while True : 
             
             global conn
-            data = conn.recv(2048) 
-           # ExampleApp.chat.append(data.decode())
+            data = conn.recv(2048)
+            window.TextW.append(data.decode())
+
             print(data)
 
 
 
 def main():
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
 
     window = ExampleApp()
     serverThread=ServerThread(ExampleApp)
