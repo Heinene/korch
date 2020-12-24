@@ -45,10 +45,17 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-
-    
-  
-
+        self.chatTextField=QLineEdit(self)
+        self.chatTextField.resize(480,100)
+        self.chatTextField.move(10,350)
+        self.chatBody=QVBoxLayout(self)
+        # self.chatBody.addWidget(self.chatTextField)
+        # self.chatBody.addWidget(self.btnSend)
+        # self.chatWidget.setLayout(self.chatBody)
+        splitter=QSplitter(QtCore.Qt.Vertical)
+        self.chat = QTextEdit()
+        self.chat.setReadOnly(True)
+        
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -72,7 +79,7 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.pushButton.clicked.connect(self.send)
         self.pushButton_2.clicked.connect(self.Open)
-        self.pushButton_2.clicked.connect(self.read_from_file)
+        #self.pushButton_2.clicked.connect(self.read_from_file)
 
 
 
