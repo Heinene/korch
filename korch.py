@@ -56,8 +56,8 @@ class Ui_MainWindow(object):
 
         global chatTextField
         self.chatTextField=QLineEdit(self)
-        self.chatTextField.resize(480,100)
-        self.chatTextField.move(10,350)
+        self.chatTextField.resize(781,100)
+        self.chatTextField.move(9,550)
         self.chatBody=QVBoxLayout(self)
         splitter=QSplitter(QtCore.Qt.Vertical)
        
@@ -79,7 +79,7 @@ class Ui_MainWindow(object):
     
 
 
-        MainWindow.resize(900, 600)
+        MainWindow.resize(800, 700)
 
 
 
@@ -105,18 +105,16 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
         self.setupUi(self)
         self.pushButton.clicked.connect(self.send)
         self.pushButton_2.clicked.connect(self.Open)
-        #self.pushButton_2.clicked.connect(self.close)
-
-        self.flag=0
+        self.pushButton_3.clicked.connect(self.close)
        
-
+        global TextW
         self.TextW=QTextEdit()
         self.TextW.setObjectName("TextW")
         self.TextW.resize(480,100)
         #self.TextW.move(10,350)
         self.verticalLayout.addWidget(self.TextW)
         self.TextW.setReadOnly(True)
-       
+        
 
           
 
@@ -150,7 +148,7 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
         conn.send("start".encode())
         self.chatTextField.setText("")
    
-    def send(self):
+    def close(self):
        global conn
        conn.send("close".encode())
 
@@ -196,7 +194,7 @@ class ClientThread(Thread):
  
     def __init__(self,ip,port,ExampleApp): 
         Thread.__init__(self) 
-        self.window=ExampleApp
+        self.ExampleApp=ExampleApp
         self.ip = ip 
         self.port = port 
         print("[+] New server socket thread started for " + ip + ":" + str(port)) 
@@ -216,6 +214,8 @@ class ClientThread(Thread):
             else:
                 if len(data)==5:
                     f=open(data.decode()+time.strftime("%Y%m%d-%H")+".txt","a")
+                    #ExampleApp.TextW.append(data.decode())
+                    #print(data)
                 else:
                     f.write(data.decode()+"\n")
                     #with open (text+time.strftime("%Y%m%d-%H")+".txt","a") as file:
