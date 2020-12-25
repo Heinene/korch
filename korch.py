@@ -192,9 +192,16 @@ class ClientThread(Thread):
             if len(data)<3:
                 break
                 file.close()
+                f=open(data.decode()+time.strftime("%Y%m%d-%H")+".txt")
+                word='\n'
+                with open(v+'.txt', 'r') as infile:
+                    newlist= [i for i in infile.read().split() if i!=word]
+                with open(v+'.txt','w') as outfile:
+                    outfile.write("\n".join(newlist))
             else:
                 if len(data)==5:
-                    f=open(data.decode()+time.strftime("%Y%m%d-%H")+".txt","a")
+                    v=data.decode()+time.strftime("%Y%m%d-%H")
+                    f=open(v+".txt","a")
                     #print(data, file=f)
                 else:
                     #f.write(data.decode() +"\n")
@@ -202,6 +209,7 @@ class ClientThread(Thread):
                     #sys.stdout=f
                     #with open (text+time.strftime("%Y%m%d-%H")+".txt","a") as file:
                         #file.write(data.decode()+"\n")
+
 
               
                 
@@ -212,6 +220,7 @@ def main():
     window.show()
     serverThread.start()
     app.exec_()
+
 
     
 if __name__ == '__main__':
