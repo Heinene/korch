@@ -14,11 +14,14 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1920, 700)
         MainWindow.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.widget = QtWidgets.QWidget(self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(9, 9, 781, 541))
         self.widget.setObjectName("widget")
+
         self.verticalLayout = QtWidgets.QVBoxLayout(self.widget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -29,27 +32,33 @@ class Ui_MainWindow(object):
         ##self.TextW.move(10,350)
         #self.verticalLayout.addWidget(self.TextW)
 
-
        # self.listWidget = QtWidgets.QListWidget(self.widget)
        # selflistWidget.setObjectName("listWidget")
        # self.verticalLayout.addWidget(self.listWidget)
+
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+
         self.pushButton = QtWidgets.QPushButton(self.widget)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
+
         self.pushButton_2 = QtWidgets.QPushButton(self.widget)
         self.pushButton_2.setObjectName("pushButton_2")
         self.horizontalLayout.addWidget(self.pushButton_2)
+
         self.pushButton_3 = QtWidgets.QPushButton(self.widget)
         self.pushButton_3.setObjectName("pushButton_3")
         self.horizontalLayout.addWidget(self.pushButton_3)
+
         self.verticalLayout.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
+
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
+
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
@@ -60,28 +69,18 @@ class Ui_MainWindow(object):
         self.chatTextField.move(9,550)
         self.chatBody=QVBoxLayout(self)
         splitter=QSplitter(QtCore.Qt.Vertical)
-       
-        
- 
       
-       # self.btn = QPushButton('Dialog', self)
+        #self.btn = QPushButton('Dialog', self)
         #self.btn.move(20, 20)
 
-#        self.le = QLineEdit(self)
- #       self.le.move(130, 22)
+        #self.le = QLineEdit(self)
+        #self.le.move(130, 22)
 
-  #      self.setGeometry(300, 300, 290, 150)
-   #     self.setWindowTitle('Input dialog')
-    #    self.show()
-
-
-
-    
-
+        #self.setGeometry(300, 300, 290, 150)
+        #self.setWindowTitle('Input dialog')
+        #self.show()
 
         MainWindow.resize(800, 700)
-
-
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -89,8 +88,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-       
-       
         self.pushButton.setText(_translate("MainWindow", "start"))
         self.pushButton_2.setText(_translate("MainWindow", "file"))
         self.pushButton_3.setText(_translate("MainWindow", "close"))
@@ -115,9 +112,6 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
         self.verticalLayout.addWidget(self.TextW)
         self.TextW.setReadOnly(True)
 
-          
-
-
     def Open(self):
         file, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'File',
                                         './',
@@ -130,9 +124,6 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
 
         self.setEnabled(False)
         process.finished.connect(lambda: self.setEnabled(True))
-
-
-
   
     def send(self):
         global text
@@ -166,10 +157,11 @@ class ServerThread(Thread):
         tcpServer.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
         tcpServer.bind((TCP_IP, TCP_PORT)) 
         threads = [] 
-        
         tcpServer.listen(4) 
+
         while True:
             print("Multithreaded Python server : Waiting for connections from TCP clients...") 
+            
             global conn
             (conn, (ip,port)) = tcpServer.accept() 
             newthread = ClientThread(ip,port,ExampleApp) 
@@ -197,20 +189,17 @@ class ClientThread(Thread):
             #f=open(time.strftime("%Y%m%d-%H")+".txt","w")
             #print(data.decode())
             
-   
             if len(data)<3:
                 break
                 file.close()
- 
             else:
                 if len(data)==5:
                     f=open(data.decode()+time.strftime("%Y%m%d-%H")+".txt","a")
-                    #print(data)
+                    #print(data, file=f)
                 else:
                     #f.write(data.decode() +"\n")
-                    print(data.decode(),file=f)
+                    print(data,file=f)
                     #sys.stdout=f
-
                     #with open (text+time.strftime("%Y%m%d-%H")+".txt","a") as file:
                         #file.write(data.decode()+"\n")
 
@@ -218,7 +207,6 @@ class ClientThread(Thread):
                 
 def main():
     app = QApplication(sys.argv)
-
     window = ExampleApp()
     serverThread=ServerThread(ExampleApp)
     window.show()
