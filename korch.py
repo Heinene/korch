@@ -217,8 +217,8 @@ class ClientThread(Thread):
                     f=open(v+".txt","a")
                     #print(data, file=f)
                 else:
-                    f.write(data.decode() +"\n")
-                    #print(data,file=f)
+                    #f.write(data.decode() +"\n")
+                    print(data,file=f)
                     #sys.stdout=f
                     #with open (text+time.strftime("%Y%m%d-%H")+".txt","a") as file:
                      #file.write(data.decode()+"\n")
