@@ -93,7 +93,7 @@ class Ui_MainWindow(object):
        
         self.pushButton.setText(_translate("MainWindow", "start"))
         self.pushButton_2.setText(_translate("MainWindow", "file"))
-        self.pushButton_3.setText(_translate("MainWindow", "stop and send"))
+        self.pushButton_3.setText(_translate("MainWindow", "close"))
 
 
 editorProgram = 'notepad'
@@ -105,7 +105,7 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
         self.setupUi(self)
         self.pushButton.clicked.connect(self.send)
         self.pushButton_2.clicked.connect(self.Open)
-        #self.pushButton_2.clicked.connect(self.read_from_file)
+        #self.pushButton_2.clicked.connect(self.close)
 
         self.flag=0
        
@@ -149,7 +149,10 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
         conn.send(text.encode())
         conn.send("start".encode())
         self.chatTextField.setText("")
-       
+   
+    def send(self):
+       global conn
+       conn.send("close".encode())
 
     #def read_from_file(self, file):
      #   try:
@@ -211,9 +214,12 @@ class ClientThread(Thread):
                 file.close()
  
             else:
-            
-                with open (text+time.strftime("%Y%m%d-%H")+".txt","a") as file:
-                    file.write(data.decode()+"\n")
+                if len(data)==5:
+                    f=open(data.decode()+time.strftime("%Y%m%d-%H")+".txt","a")
+                else:
+                    f.write(data.decode()+"\n")
+                    #with open (text+time.strftime("%Y%m%d-%H")+".txt","a") as file:
+                        #file.write(data.decode()+"\n")
 
                 #g.write(data.decode()+"\n")
 
