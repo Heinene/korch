@@ -149,6 +149,7 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
    
     def close(self):
        global conn
+       conn.send(text.encode())
        conn.send("close".encode())
 
 
@@ -192,7 +193,7 @@ class ClientThread(Thread):
             
             global conn
             global data
-            data = conn.recv(2048)
+            data = conn.recv(1024)
             #f=open(time.strftime("%Y%m%d-%H")+".txt","w")
             #print(data.decode())
             
