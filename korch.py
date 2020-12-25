@@ -72,10 +72,8 @@ class Ui_MainWindow(object):
       
         #self.btn = QPushButton('Dialog', self)
         #self.btn.move(20, 20)
-
         #self.le = QLineEdit(self)
         #self.le.move(130, 22)
-
         #self.setGeometry(300, 300, 290, 150)
         #self.setWindowTitle('Input dialog')
         #self.show()
@@ -134,6 +132,7 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
         textFormatted='{:>80}'.format(text)
         self.TextW.append(textFormatted)
         global conn
+        
         conn.send(text.encode())
         conn.send("start".encode())
         self.chatTextField.setText("")
@@ -190,25 +189,19 @@ class ClientThread(Thread):
             #print(data.decode())
             
             if len(data)<3:
+                f.close()
                 break
-                file.close()
-                f=open(data.decode()+time.strftime("%Y%m%d-%H")+".txt")
-                word='\n'
-                with open(v+'.txt', 'r') as infile:
-                    newlist= [i for i in infile.read().split() if i!=word]
-                with open(v+'.txt','w') as outfile:
-                    outfile.write("\n".join(newlist))
             else:
                 if len(data)==5:
                     v=data.decode()+time.strftime("%Y%m%d-%H")
                     f=open(v+".txt","a")
                     #print(data, file=f)
                 else:
-                    #f.write(data.decode() +"\n")
-                    print(data,file=f)
+                    f.write(data.decode() +"\n")
+                    #print(data,file=f)
                     #sys.stdout=f
                     #with open (text+time.strftime("%Y%m%d-%H")+".txt","a") as file:
-                        #file.write(data.decode()+"\n")
+                     #file.write(data.decode()+"\n")
 
 
               
@@ -221,6 +214,7 @@ def main():
     serverThread.start()
     app.exec_()
 
+    
 
     
 if __name__ == '__main__':
