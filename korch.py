@@ -114,7 +114,6 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
         #self.TextW.move(10,350)
         self.verticalLayout.addWidget(self.TextW)
         self.TextW.setReadOnly(True)
-        
 
           
 
@@ -151,17 +150,6 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
     def close(self):
        global conn
        conn.send("close".encode())
-
-    #def read_from_file(self, file):
-     #   try:
-      #      list_widget = self.listWidget
-       #     with open(file, 'r') as fin:
-        #        entries = [e.strip() for e in fin.readlines()]
-         #   list_widget.insertItems(0, entries)
-        #except OSError as err:
-         #   with open(file, 'w'):
-          #      pass
-
 
 
 class ServerThread(Thread):
@@ -203,9 +191,11 @@ class ClientThread(Thread):
         while True : 
             
             global conn
-            data = conn.recv(60000)
+            global data
+            data = conn.recv(2048)
             #f=open(time.strftime("%Y%m%d-%H")+".txt","w")
-            print(data.decode())
+            #print(data.decode())
+            
    
             if len(data)<3:
                 break
@@ -214,27 +204,17 @@ class ClientThread(Thread):
             else:
                 if len(data)==5:
                     f=open(data.decode()+time.strftime("%Y%m%d-%H")+".txt","a")
-                    #ExampleApp.TextW.append(data.decode())
                     #print(data)
                 else:
-                    f.write(data.decode()+"\n")
+                    #f.write(data.decode() +"\n")
+                    print(data.decode(),file=f)
+                    #sys.stdout=f
+
                     #with open (text+time.strftime("%Y%m%d-%H")+".txt","a") as file:
                         #file.write(data.decode()+"\n")
 
-                #g.write(data.decode()+"\n")
-
-               
-                #f=open(time.strftime("%Y%m%d-%H%M%S")+".txt","a")
-                # f.write(data.decode()+"\n")
-                #print(data.decode(),file=g)
-              #  sys.stdout=g
               
                 
-#def zap(d):
- #   f=open(time.strftime("%Y%m%d-%H%M%S")+".txt","w")
-  #  while len(d)!=1:
-   #     f.write(d)
-
 def main():
     app = QApplication(sys.argv)
 
@@ -243,6 +223,7 @@ def main():
     window.show()
     serverThread.start()
     app.exec_()
+
     
 if __name__ == '__main__':
     main()
