@@ -54,6 +54,7 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+        global chatTextField
         self.chatTextField=QLineEdit(self)
         self.chatTextField.resize(480,100)
         self.chatTextField.move(10,350)
@@ -137,6 +138,7 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow, QDialog):
 
   
     def send(self):
+        global text
         text=self.chatTextField.text()
         font=self.TextW.font()
         font.setPointSize(13)
@@ -209,8 +211,8 @@ class ClientThread(Thread):
                 file.close()
  
             else:
-
-                with open (time.strftime("%Y%m%d-%H")+".txt","a") as file:
+            
+                with open (text+time.strftime("%Y%m%d-%H")+".txt","a") as file:
                     file.write(data.decode()+"\n")
 
                 #g.write(data.decode()+"\n")
