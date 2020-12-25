@@ -170,6 +170,7 @@ class ServerThread(Thread):
         for t in threads: 
             t.join() 
 
+
 class ClientThread(Thread): 
  
     def __init__(self,ip,port,ExampleApp): 
@@ -190,9 +191,28 @@ class ClientThread(Thread):
             
             if len(data)<3:
                 f.close()
+                result = [] 
+                stroka = '' 
+
+                with open(v+".txt", 'r') as inf:
+                    file = inf.readlines()
+
+                for i in file:
+                    for j in range(len(i) - 2):
+                        if i[j] == '\\' and i[j + 1] == 'n':
+                            result.append(stroka)
+                            stroka = ''
+                            break
+                        stroka += i[j]
+                with open(v+".txt", 'w') as ouf:
+                    for elem in result:
+                        ouf.write(elem + '\n')
+                
                 break
+         
             else:
                 if len(data)==5:
+                    #global v
                     v=data.decode()+time.strftime("%Y%m%d-%H")
                     f=open(v+".txt","a")
                     #print(data, file=f)
@@ -204,7 +224,7 @@ class ClientThread(Thread):
                      #file.write(data.decode()+"\n")
 
 
-              
+       
                 
 def main():
     app = QApplication(sys.argv)
@@ -213,6 +233,11 @@ def main():
     window.show()
     serverThread.start()
     app.exec_()
+
+   
+    
+
+
 
     
 
